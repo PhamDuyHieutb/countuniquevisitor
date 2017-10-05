@@ -45,7 +45,7 @@ object test{
     val filterresult =   result.filter(e => e.getString(2)!="0")
     val viewlabel_1 = filterresult.count()
 
-    result.rdd.saveAsTextFile("/home/hadoop/reeeeeeeeeee") 
+    result.rdd.saveAsTextFile("/home/hadoop/reeeeeeeeeee")
     print("unique visitor 2017_10_02 =================== " + filterresult.select("guid").distinct().count()+ "   co "+ viewlabel_1 +" view nhan 1 tren tong "+ view +" view")
 
 
