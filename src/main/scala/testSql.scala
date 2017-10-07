@@ -26,7 +26,7 @@ object test{
     sqlContext.setConf("spark.sql.parquet.binaryAsString","true")
 
     //    val spark = SparkSession.builder().master("local").appName("Log Query").enableHiveSupport().getOrCreate()
-    val logdata = sqlContext.read.parquet("/data/Parquet/AdnLog/2017_10_02/*").repartition(10)
+    val logdata = sqlContext.read.parquet("/data/Parquet/AdnLog/2017_10_02/parquet_logfile_at_19h_35.snap").repartition(10)
     logdata.registerTempTable("log")
 //    val sqlClickResult= sqlContext.sql("select guid,domain,path,click_or_view from log ").filter(e => !(e.getString(1)!="kenh14.vn"))
 //    val a = sqlClickResult.map(a =>  (a.getLong(0), a.getString(1)+""+a.getString(2),a.getBoolean(3)))
@@ -50,9 +50,11 @@ object test{
 
 
     val sqlClickResult = sqlContext.sql("select guid,domain,path,click_or_view from log ")
+    println("start load")
     val sqlfilter = sqlClickResult.toDF().filter(sqlClickResult("domain").startsWith("kenh14.vn"))
-    val a = sqlClickResult.map(a =>  (a.getLong(0), a.getString(1)+""+a.getString(2),a.getBoolean(3)))
-    val urlkenh14 = sqlContext.read.format("com.databricks.spark.csv").load("/user/hieupd/kenh14.csv")
+    println("end load")
+    val a = sqlClickResult.map(a =>  (a.getLong(0), a.getString(1)+a.getString(2),a.getBoolean(3)))
+    val urlkenh14 = sqlContext.read.format("com.databricks.spark.csv").option("header", "true").option("inferSchema", "true").load("hdfs://192.168.23.200:9000/user/hieupd/kenh14.csv")
     val newNames = Seq("url", "label")
     val dfRenamed = urlkenh14.toDF(newNames: _*)
     val newNames_a = Seq("guid", "url","click_or_view")
@@ -64,7 +66,7 @@ object test{
         val filterresult =   result.filter(result("label").contains("0") )
         val viewlabel_1 = filterresult.count()
 
-        print("unique visitor 2017_10_02 =================== " + filterresult.select("guid").distinct().count()+ "   co "+ viewlabel_1 +" view nhan 1 tren tong "+ view +" view")
+        print("unique visitor 2017_10_02 =================== " + filterresult.select("guid").count()+ "   co "+ viewlabel_1 +" view nhan 1 tren tong "+ view +" view")
   }
 
 }
