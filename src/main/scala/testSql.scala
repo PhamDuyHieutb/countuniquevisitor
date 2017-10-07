@@ -52,7 +52,7 @@ object test{
     val sqlClickResult = sqlContext.sql("select guid,domain,path,click_or_view from log ")
     val sqlfilter = sqlClickResult.toDF().filter(sqlClickResult("domain").startsWith("kenh14.vn"))
     val a = sqlClickResult.map(a =>  (a.getLong(0), a.getString(1)+""+a.getString(2),a.getBoolean(3)))
-    val urlkenh14 = sqlContext.read.load("/home/hieupd/countuser/countuniquevisitor/kenh14.csv")
+    val urlkenh14 = sqlContext.read.load("/user/hieupd/kenh14.csv")
     val newNames = Seq("url", "label")
     val dfRenamed = urlkenh14.toDF(newNames: _*)
     val newNames_a = Seq("guid", "url","click_or_view")
